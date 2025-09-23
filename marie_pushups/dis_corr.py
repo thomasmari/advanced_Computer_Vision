@@ -1,6 +1,6 @@
 import cv2
 import time
-from pose_ana_corr import get_pushup_state
+from marie_pushups.pose_ana_corr import get_pushup_state
 import mediapipe as mp
 
 # ---------------- SETUP ----------------
