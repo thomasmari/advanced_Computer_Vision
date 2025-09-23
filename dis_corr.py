@@ -37,7 +37,8 @@ while True:
     h, w = frame.shape[:2]
     results = pose_model.process(frame_rgb)
 
-    overlay_text = ""
+    overlay_text_state = f"State: 'unknown'"
+    overlay_text_count = f"Count: 0"
 
     if results.pose_landmarks:
         # Draw landmarks
