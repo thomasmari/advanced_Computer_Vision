@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-from preprocessing import estimPose_img
+from marie_pushups.preprocessing import estimPose_img
 import numpy as np
 
 # Initializing mediapipe pose class.
