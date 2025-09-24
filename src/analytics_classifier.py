@@ -112,6 +112,10 @@ def detect_fall_improved_video(features, vertical_axis=1,
     angles = np.round(compute_torso_angle(shoulders, hips),2)  # 0° = upright, 90° = flat
     # print(angles)
 
+    fast_downward_condition = False
+    significant_drop_condition = False
+    horizontal_posture_condition = False
+
     for i in range(20, nb_frames):
         # Condition 1: Sudden downward motion
         fast_downward = (shoulder_vy[i] > velocity_threshold and
@@ -133,11 +137,19 @@ def detect_fall_improved_video(features, vertical_axis=1,
         significant_drop = height_drop > height_drop_threshold
         significant_drop_state[i] = significant_drop
 
-        # if fast_downward and horizontal_posture and significant_drop: # XXXX ne marche pas car ne se passent pas en meme temps
-        # if significant_drop and horizontal_posture:
-        # if fast_downward:
-        if fast_downward and significant_drop:
+
+        if fast_downward:
+            fast_downward_condition = True
+        
+        if significant_drop:
+            significant_drop_condition = True
+
+        if horizontal_posture:
+            horizontal_posture_condition = True
+        
+        if fast_downward_condition and horizontal_posture_condition and significant_drop_condition:
             fall_state[i:] = True
+
     return fall_state, height_drop_state, significant_drop_state, angles, horizontal_posture_state, shoulder_vy, hip_vy, shoulder_ay, hip_ay, fast_downward_state
 
 if __name__ == "__main__":

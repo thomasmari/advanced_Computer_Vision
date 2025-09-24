@@ -120,5 +120,12 @@ def ui_features_from_path(video_path:str):
 if __name__ == "__main__":
     # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_banana-peel.mp4"
     # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_walking-trip.mp4"
-    video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_ouvrier.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_ouvrier.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_marathoner.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_surfing.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_bed-of-money.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_surfing.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_leg-drop.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_electric-shock.mp4"
+    video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_faint.mp4"
     ui_features_from_path(video_path)
