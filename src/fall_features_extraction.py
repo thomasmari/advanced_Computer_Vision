@@ -1,5 +1,5 @@
 # Feature Extraction for Falls
-from src.extract_landmark import video_to_array
+from extract_landmark import video_to_array
 import numpy as np
 
 
