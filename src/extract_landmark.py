@@ -47,8 +47,9 @@ def frame_to_row(img):
     # Iterate over the detected landmarks.
     i=0
     for landmark in results.pose_landmarks.landmark:
-        frame_landmark_values[i] = ((int(landmark.x * width), int(landmark.y * height),
-                            (landmark.z * width)))
+        # frame_landmark_values[i] = ((int(landmark.x * width), int(landmark.y * height),
+                            # (landmark.z * width))) ##version calibree
+        frame_landmark_values[i] = (landmark.x,landmark.y,landmark.z)
         i+=1
     return(frame_landmark_values)
 
