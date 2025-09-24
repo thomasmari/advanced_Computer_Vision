@@ -4,11 +4,11 @@
 
 import cv2
 import mediapipe as mp
-from preprocessing import estimPose_img
-from extract_landmark import video_to_array, frame_to_row
-from fall_features_extraction import cha_table_features
-from analytics_classifier import detect_fall_improved_video
-from features_extraction import FeaturesExtraction #webcam requirement
+from src.preprocessing import estimPose_img
+from src.extract_landmark import video_to_array, frame_to_row
+from src.fall_features_extraction import cha_table_features
+from src.analytics_classifier import detect_fall_improved_video
+from src.features_extraction import FeaturesExtraction #webcam requirement
 
 # Initializing mediapipe pose class.features 
 mp_pose = mp.solutions.pose
