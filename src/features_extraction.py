@@ -8,6 +8,10 @@ class FeaturesExtraction():
         self.features = np.zeros((size, nb_landmarks_selectionnes, nb_features))  # 3 (coord) + 3 (vitesse) + 1 (||v||) + 3 (accel) + 1 (||a||)
         self.last_id = -1
         self.frame_number = 0
+        self.last_FD_condition = -1000
+        self.last_SD_condition = -1000
+        self.last_HP_condition = -1000
+        self.last_FALL_condition = -1000
 
     def compute_feature_row(self,landmark_row):
         #class attribute
@@ -58,3 +62,81 @@ class FeaturesExtraction():
         if index >= self.size:
             return Exception("Cannot access rows with index greater that init size of instance")
         return self.features[(self.last_id - index)]
+    
+    def get_previous_feature_rows(self, number=1):
+        """index = 0, for the last frame"""
+        if (self.last_id-number)>= 0:
+            return(self.features[self.last_id-number:self.last_id+1].copy())
+        else:
+            return (np.concatenate(self.features[self.last_id-number:], self.features[:self.last_id+1]))
+
+    def get_shoulder_vy(self):
+        return(self.get_previous_feature_row()[1,4])
+    
+    def get_shoulder_ay(self):
+        return(self.get_previous_feature_row()[1,8])
+    
+    def get_hip_vy(self):
+        return(self.get_previous_feature_row()[2,4])
+    
+    def get_hip_ay(self):
+        return(self.get_previous_feature_row()[2,8])
+    
+    def get_fast_downward_state(self,velocity_threshold=0.5, acceleration_threshold=5.0):
+        fast_downward = (self.get_shoulder_vy() > velocity_threshold and
+                         self.get_hip_vy() > velocity_threshold and
+                         self.get_shoulder_ay() > acceleration_threshold and
+                         self.get_hip_ay() > acceleration_threshold)
+        if fast_downward:
+            self.last_FD_condition = self.frame_number
+        return(fast_downward)
+    
+    def compute_torso_angle(self, shoulders, hips):
+        """
+        Returns angle (in degrees) between torso vector (shoulders to hips) and vertical axis (y-axis).
+        0° = upright, 90° = lying down
+        """
+        torso_vector = hips - shoulders  # shape: (nb_frames, 3)
+        vertical_vector = np.array([0, -1, 0])  # y-axis up
+        dot_product = np.sum(torso_vector * vertical_vector)
+        norms = np.linalg.norm(torso_vector) * np.linalg.norm(vertical_vector)
+        cos_theta = np.clip(dot_product / norms, -1.0, 1.0)
+
+        angles = np.arccos(cos_theta) * 180 / np.pi  # convert to degrees
+        return angles  # shape: (nb_frames,)
+
+    def get_angles(self):
+        # Reconstruct positions to compute orientation
+        shoulders = self.get_previous_feature_row()[1,0:3]
+        hips = self.get_previous_feature_row()[2,0:3]
+        angles = np.round(self.compute_torso_angle(shoulders, hips),2)  # 0° = upright, 90° = flat
+        return(angles)
+    
+    def get_horizontal_posture_state(self, angle_threshold=100.0):
+        bool_HP_state = self.get_angles() < angle_threshold
+        if bool_HP_state:
+            self.last_HP_condition = self.frame_number
+        return(bool_HP_state)
+
+    def get_height_drop(self):
+        features = self.get_previous_feature_row()
+        features_20 = self.get_previous_feature_row(20)
+        initial_torso_y = (features_20[1,1] + features_20[2,1]) / 2
+        current_torso_y = (features[1,1] + features[2,1]) / 2
+        height_drop = current_torso_y - initial_torso_y  # y increases downward in MediaPipe
+        return(np.round(height_drop, 3))
+
+    def get_significant_drop_state(self, height_drop_threshold=0.2):
+        significant_drop = self.get_height_drop() > height_drop_threshold
+        if significant_drop:
+            self.last_SD_condition = self.frame_number
+        return(significant_drop)
+    
+    def get_fall_state(self, fall_cool_down = 50, analysis_window = 20):
+        if self.frame_number - self.last_FALL_condition < fall_cool_down:   
+            return True
+        if (self.frame_number-self.last_HP_condition < analysis_window) and (self.frame_number-self.last_SD_condition < analysis_window) and (self.frame_number-self.last_FD_condition < analysis_window) :
+        # if self.get_horizontal_posture_state() or self.get_significant_drop_state() or self.get_fast_downward_state():
+            self.last_FALL_condition = self.frame_number
+            return True
+        return False

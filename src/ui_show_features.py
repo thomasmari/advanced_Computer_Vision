@@ -112,6 +112,15 @@ def ui_features_from_webcam():
         results = pose_img.process(img_rgb)
         fe.compute_feature_row(frame_to_row(img_rgb))
         frame_feature = fe.get_previous_feature_row()
+        fall_state = fe.get_fall_state()
+        height_drop = fe.get_height_drop()
+        if fe.frame_number >= 20:
+            significant_drop_state = fe.get_significant_drop_state()
+        else:
+            significant_drop_state = False
+        angles = fe.get_angles()
+        horizontal_posture_state = fe.get_horizontal_posture_state()
+        fast_downward_state = fe.get_fast_downward_state()
         # Draw the pose landmarks if detected
         if results.pose_landmarks:
             h, w, _ = frame.shape
@@ -129,6 +138,19 @@ def ui_features_from_webcam():
                 #speed vector 
                 vy = int(frame_feature[features_idx,4]*h/10)
                 cv2.arrowedLine(frame, (x, y), (x, y+vy), (255, 0, 0), 3, tipLength=0.2)
+
+        cv2.putText(frame, f"Fall : {fall_state}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                    1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Height Drop : {height_drop}", (30, 80), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Significant Drop : {significant_drop_state}", (30, 110), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Angle Body / Horizontal : {angles}", (30, 140), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (159, 54, 216), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Horizontal Position Detected : {horizontal_posture_state}", (30, 170), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8, (159, 54, 216), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Fast Downward State : {fast_downward_state}", (30, 200), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8, (255, 0, 0), 1, cv2.LINE_AA)
 
         # Resize frame for display
         frame_resized = cv2.resize(frame, (960, 540))
