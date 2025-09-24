@@ -39,13 +39,13 @@ class FeaturesExtraction():
         if self.frame_number>0:
             for idx in range(nb_landmarks_selectionnes):
                 # VITESSE vectorielle et scalaire
-                velocity = self.features[self.last_id, idx, 0:3] - self.get_previous_feature_row(1)[idx, 0:3]/ dt 
+                velocity = (self.features[self.last_id, idx, 0:3] - self.get_previous_feature_row(1)[idx, 0:3])/ dt 
                 self.features[self.last_id, idx, 3:6] = velocity
                 self.features[self.last_id, idx, 6] = np.linalg.norm(velocity)
         if self.frame_number>1:
             for idx in range(nb_landmarks_selectionnes):
                 # ACCÉLÉRATION vectorielle et scalaire
-                acceleration = self.features[self.last_id, idx, 3:6] - self.get_previous_feature_row(1)[idx, 3:6]/ dt                        # (nb_frames-2, 3)
+                acceleration = (self.features[self.last_id, idx, 3:6] - self.get_previous_feature_row(1)[idx, 3:6])/ dt                        # (nb_frames-2, 3)
                 self.features[2:, idx, 7:10] = acceleration
                 self.features[2:, idx, 10] = np.linalg.norm(acceleration)
         #class atribute
