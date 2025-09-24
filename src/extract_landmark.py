@@ -88,6 +88,6 @@ def video_to_array(video_path):
 
 ### test
 if __name__=="__main__":
-    video_path = "data/video_chute/istockphoto-1066783428-640_adpp_is.mp4"
+    video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_ouvrier.mp4"
     res  = video_to_array(video_path)
     print(res.shape)
