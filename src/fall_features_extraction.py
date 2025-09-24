@@ -42,7 +42,6 @@ import numpy as np
 
 #     return features
 
-
 def cha_table_features(landmarks):
     nb_frames, nb_landmarks, nb_coord = landmarks.shape
 

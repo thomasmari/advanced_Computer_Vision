@@ -26,13 +26,13 @@ class FeaturesExtraction():
         cheville_droite = 28
 
         # COORDONNÉES
-        self.features[self.last_id, 0, 0:3] = landmark_row[:, nez, :3]                               # Nez
-        self.features[self.last_id, 1, 0:3] = np.mean(landmark_row[:, epaules, :3], axis=1)         # Centre épaules
-        self.features[self.last_id, 2, 0:3] = np.mean(landmark_row[:, hanches, :3], axis=1)         # Centre hanches
-        self.features[self.last_id, 3, 0:3] = landmark_row[:, poignet_gauche, :3]                   # Poignet gauche
-        self.features[self.last_id, 4, 0:3] = landmark_row[:, poignet_droit, :3]                    # Poignet droit
-        self.features[self.last_id, 5, 0:3] = landmark_row[:, cheville_gauche, :3]                  # Cheville gauche
-        self.features[self.last_id, 6, 0:3] = landmark_row[:, cheville_droite, :3]                  # Cheville droite
+        self.features[self.last_id, 0, 0:3] = landmark_row[nez, :3]                               # Nez
+        self.features[self.last_id, 1, 0:3] = np.mean(landmark_row[epaules, :3], axis=0)         # Centre épaules
+        self.features[self.last_id, 2, 0:3] = np.mean(landmark_row[hanches, :3], axis=0)         # Centre hanches
+        self.features[self.last_id, 3, 0:3] = landmark_row[poignet_gauche, :3]                   # Poignet gauche
+        self.features[self.last_id, 4, 0:3] = landmark_row[poignet_droit, :3]                    # Poignet droit
+        self.features[self.last_id, 5, 0:3] = landmark_row[cheville_gauche, :3]                  # Cheville gauche
+        self.features[self.last_id, 6, 0:3] = landmark_row[cheville_droite, :3]                  # Cheville droite
 
         dt = 1 / 24  # Assuming 24 fps
         # VITESSE
@@ -41,13 +41,13 @@ class FeaturesExtraction():
                 # VITESSE vectorielle et scalaire
                 velocity = self.features[self.last_id, idx, 0:3] - self.get_previous_feature_row(1)[idx, 0:3]/ dt 
                 self.features[self.last_id, idx, 3:6] = velocity
-                self.features[self.last_id, idx, 6] = np.linalg.norm(velocity, axis=1)
+                self.features[self.last_id, idx, 6] = np.linalg.norm(velocity)
         if self.frame_number>1:
             for idx in range(nb_landmarks_selectionnes):
                 # ACCÉLÉRATION vectorielle et scalaire
                 acceleration = self.features[self.last_id, idx, 3:6] - self.get_previous_feature_row(1)[idx, 3:6]/ dt                        # (nb_frames-2, 3)
                 self.features[2:, idx, 7:10] = acceleration
-                self.features[2:, idx, 10] = np.linalg.norm(acceleration, axis=1)
+                self.features[2:, idx, 10] = np.linalg.norm(acceleration)
         #class atribute
         self.frame_number += 1
 
