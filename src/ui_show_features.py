@@ -27,7 +27,7 @@ def ui_features_from_path(video_path:str):
     print(res.shape)
     features = cha_table_features(res)
 
-    fall_state, height_drop_state, significant_drop_state, angles = detect_fall_improved_video(features)
+    fall_state, height_drop_state, significant_drop_state, angles, horizontal_posture_state, shoulder_vy, hip_vy, shoulder_ay, hip_ay, fast_downward_state = detect_fall_improved_video(features)
 
     cap = cv2.VideoCapture(video_path)
     i=0
@@ -69,9 +69,21 @@ def ui_features_from_path(video_path:str):
         cv2.putText(frame, f"Height Drop : {height_drop_state[i]}", (30, 80), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, f"Significant Drop : {significant_drop_state[i]}", (30, 110), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, (0, 0, 255), 1, cv2.LINE_AA)
+                    0.8, (0, 0, 255), 1, cv2.LINE_AA)
         cv2.putText(frame, f"Angle Body / Horizontal : {angles[i]}", (30, 140), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (159, 54, 216), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Horizontal Position Detected : {horizontal_posture_state[i]}", (30, 170), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8, (159, 54, 216), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Shoulder Velocity : {shoulder_vy[i]}", (30, 200), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, (255, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Hip Velocity : {hip_vy[i]}", (30, 230), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (255, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Shoulder Acceleration : {shoulder_ay[i]}", (30, 260), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (255, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Hip Acceleration : {hip_ay[i]}", (30, 290), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (255, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Fast Downward State : {fast_downward_state[i]}", (30, 320), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8, (255, 0, 0), 1, cv2.LINE_AA)
 
 
         # Resize frame for display
@@ -106,5 +118,7 @@ def ui_features_from_path(video_path:str):
 #     }
 
 if __name__ == "__main__":
-    video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_banana-peel.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_banana-peel.mp4"
+    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_walking-trip.mp4"
+    video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_ouvrier.mp4"
     ui_features_from_path(video_path)

@@ -78,7 +78,7 @@ def detect_fall_improved(features, vertical_axis=1,
 
 
 def detect_fall_improved_video(features, vertical_axis=1,
-                velocity_threshold=2.0, acceleration_threshold=10.0,
+                velocity_threshold=0.5, acceleration_threshold=5.0,
                 angle_threshold=100.0, height_drop_threshold=0.2): #angle_threshold=100.0, height_drop_threshold=80):
     """
     Improved fall detection based on multiple criteria.
@@ -90,19 +90,21 @@ def detect_fall_improved_video(features, vertical_axis=1,
     fall_state = np.full(nb_frames, False)
     height_drop_state = np.zeros(nb_frames)
     significant_drop_state = np.full(nb_frames, False)
-
+    horizontal_posture_state = np.full(nb_frames, False)
+    fast_downward_state = np.full(nb_frames, False)
 
     # Extract Y (vertical) position
     shoulder_y = features[:, 1, 0 + vertical_axis]
     hip_y = features[:, 2, 0 + vertical_axis]
 
     # Extract velocities and accelerations
-    shoulder_vy = features[:, 1, 3 + vertical_axis] #### 4
-    hip_vy = features[:, 2, 3 + vertical_axis]
-    shoulder_ay = features[:, 1, 7 + vertical_axis]
-    hip_ay = features[:, 2, 7 + vertical_axis]
+    shoulder_vy = np.round(features[:, 1, 3 + vertical_axis],2)
+    hip_vy = np.round(features[:, 2, 3 + vertical_axis],2)
+    shoulder_ay = np.round(features[:, 1, 7 + vertical_axis],2)
+    hip_ay = np.round(features[:, 2, 7 + vertical_axis],2)
 
-    # print(shoulder_vy, hip_vy, shoulder_ay, hip_ay)
+    print(shoulder_ay)
+    print(hip_ay)
 
     # Reconstruct positions to compute orientation
     shoulders = features[:, 1, 0:3]
@@ -112,14 +114,15 @@ def detect_fall_improved_video(features, vertical_axis=1,
 
     for i in range(20, nb_frames):
         # Condition 1: Sudden downward motion
-        # fast_downward = (shoulder_vy[i] > velocity_threshold and
-        #                  hip_vy[i] > velocity_threshold and
-        #                  shoulder_ay[i] > acceleration_threshold and
-        #                  hip_ay[i] > acceleration_threshold)
-        
+        fast_downward = (shoulder_vy[i] > velocity_threshold and
+                         hip_vy[i] > velocity_threshold and
+                         shoulder_ay[i] > acceleration_threshold and
+                         hip_ay[i] > acceleration_threshold)
+        fast_downward_state[i] = fast_downward
 
         # Condition 2: Torso becomes more horizontal
         horizontal_posture = angles[i] < angle_threshold
+        horizontal_posture_state[i] = horizontal_posture
 
         # Condition 3: Drop in torso height
         initial_torso_y = (shoulder_y[i - 19] + hip_y[i - 19]) / 2
@@ -130,15 +133,12 @@ def detect_fall_improved_video(features, vertical_axis=1,
         significant_drop = height_drop > height_drop_threshold
         significant_drop_state[i] = significant_drop
 
-        # if fast_downward and horizontal_posture and significant_drop:
-        # if horizontal_posture:
-        # if significant_drop:
-        if significant_drop and horizontal_posture:
+        # if fast_downward and horizontal_posture and significant_drop: # XXXX ne marche pas car ne se passent pas en meme temps
+        # if significant_drop and horizontal_posture:
         # if fast_downward:
+        if fast_downward and significant_drop:
             fall_state[i:] = True
-            # return True, i  # Fall detected
-    # return False, -1
-    return fall_state, height_drop_state, significant_drop_state, angles
+    return fall_state, height_drop_state, significant_drop_state, angles, horizontal_posture_state, shoulder_vy, hip_vy, shoulder_ay, hip_ay, fast_downward_state
 
 if __name__ == "__main__":
     # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_ouvrier.mp4"
