@@ -7,6 +7,7 @@ import mediapipe as mp
 from preprocessing import estimPose_img
 from extract_landmark import video_to_array, frame_to_row
 from fall_features_extraction import cha_table_features
+from analytics_classifier import detect_fall_improved_video
 
 # Initializing mediapipe pose class.features 
 mp_pose = mp.solutions.pose
@@ -25,6 +26,8 @@ def ui_features_from_path(video_path:str):
     res  = video_to_array(video_path)
     print(res.shape)
     features = cha_table_features(res)
+
+    fall_state, height_drop_state, significant_drop_state, angles = detect_fall_improved_video(features)
 
     cap = cv2.VideoCapture(video_path)
     i=0
@@ -61,6 +64,16 @@ def ui_features_from_path(video_path:str):
                 vy = int(features[i,features_idx,4]*h/10)
                 cv2.arrowedLine(frame, (x, y), (x, y+vy), (255, 0, 0), 3, tipLength=0.2)
 
+        cv2.putText(frame, f"Fall : {fall_state[i]}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                    1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"Height Drop : {height_drop_state[i]}", (30, 80), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Significant Drop : {significant_drop_state[i]}", (30, 110), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"Angle Body / Horizontal : {angles[i]}", (30, 140), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, (255, 0, 0), 1, cv2.LINE_AA)
+
+
         # Resize frame for display
         frame_resized = cv2.resize(frame, (960, 540))
         cv2.imshow("MediaPipe Video", frame_resized)
@@ -93,5 +106,5 @@ def ui_features_from_path(video_path:str):
 #     }
 
 if __name__ == "__main__":
-    video_path = "data/video_chute/istockphoto-1066783428-640_adpp_is.mp4"    
+    video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_banana-peel.mp4"
     ui_features_from_path(video_path)
