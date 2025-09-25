@@ -86,6 +86,15 @@ def ui_features_from_path(video_path:str):
         cv2.putText(frame, f"Fast Downward State : {fast_downward_state[i]}", (30, 320), cv2.FONT_HERSHEY_SIMPLEX,
                     0.8, (255, 0, 0), 1, cv2.LINE_AA)
 
+        if fall_state[i]:
+            overlay = frame.copy()
+
+            cv2.rectangle(overlay,(50,50), (800,400), (0,0,255),-1) ######################
+            cv2.addWeighted(overlay, 0.5, frame, 1 - 0.5, 0, frame)
+            cv2.putText(frame, "Et c'est la chute !", (60, 320), cv2.FONT_HERSHEY_SIMPLEX,
+                    2.5, (0, 0, 255), 3, cv2.LINE_AA)
+        else:
+            None
 
         # Resize frame for display
         frame_resized = cv2.resize(frame, (960, 540))
@@ -147,6 +156,16 @@ def ui_features_from_webcam():
                     0.8, (159, 54, 216), 1, cv2.LINE_AA)
         cv2.putText(frame, f"Fast Downward State : {fast_downward_state}", (30, 200), cv2.FONT_HERSHEY_SIMPLEX,
                     0.8, (255, 0, 0), 1, cv2.LINE_AA)
+
+        if fall_state:
+            overlay = frame.copy()
+
+            cv2.rectangle(overlay,(50,50), (800,400), (0,0,255),-1) ######################
+            cv2.addWeighted(overlay, 0.5, frame, 1 - 0.5, 0, frame)
+            cv2.putText(frame, "Et c'est la chute !", (60, 320), cv2.FONT_HERSHEY_SIMPLEX,
+                    2.5, (0, 0, 255), 3, cv2.LINE_AA)
+        else:
+            None
 
         # Resize frame for display
         frame_resized = cv2.resize(frame, (960, 540))

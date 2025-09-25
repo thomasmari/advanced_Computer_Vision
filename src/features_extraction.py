@@ -172,15 +172,15 @@ class FeaturesExtraction():
         fast_downward_state = self.get_fast_downward_state()
         return fall_state, height_drop, significant_drop_state, angles, horizontal_posture_state, fast_downward_state
     
-    def get_position(self,index):
-        frame=self.get_previous_feature_row(index=0)
+    def get_position(self,index=0):
+        frame=self.get_previous_feature_row(index)
         return frame[:,0:3]
     
-    def get_velocity(self,index):
-        frame=self.get_previous_feature_row(index=0)
+    def get_velocity(self,index=0):
+        frame=self.get_previous_feature_row(index)
         return frame[:,3:6]
     
-    def get_acceletation(self,index):
-        frame=self.get_previous_feature_row(index=0)
+    def get_acceletation(self,index=0):
+        frame=self.get_previous_feature_row(index)
         return frame[:,7:10]
     
