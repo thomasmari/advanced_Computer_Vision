@@ -160,10 +160,10 @@ def ui_features_from_webcam():
         if fall_state:
             overlay = frame.copy()
 
-            cv2.rectangle(overlay,(50,50), (800,400), (0,0,255),-1) ######################
+            cv2.rectangle(overlay,(0,0), (800,800), (0,0,255),-1)
             cv2.addWeighted(overlay, 0.5, frame, 1 - 0.5, 0, frame)
             cv2.putText(frame, "Et c'est la chute !", (60, 320), cv2.FONT_HERSHEY_SIMPLEX,
-                    2.5, (0, 0, 255), 3, cv2.LINE_AA)
+                    1.5, (0, 0, 255), 3, cv2.LINE_AA)
         else:
             None
 

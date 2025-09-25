@@ -8,4 +8,5 @@ dependencies = [
     "jupyter>=1.1.1",
     "mediapipe>=0.10.21",
     "scikit-learn>=1.7.2",
+    "streamlit>=1.50.0",
 ]
