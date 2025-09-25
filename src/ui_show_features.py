@@ -110,17 +110,13 @@ def ui_features_from_webcam():
         # frame processing
         img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = pose_img.process(img_rgb)
-        fe.compute_feature_row(frame_to_row(img_rgb))
-        frame_feature = fe.get_previous_feature_row()
-        fall_state = fe.get_fall_state()
-        height_drop = fe.get_height_drop()
-        if fe.frame_number >= 20:
-            significant_drop_state = fe.get_significant_drop_state()
-        else:
-            significant_drop_state = False
-        angles = fe.get_angles()
-        horizontal_posture_state = fe.get_horizontal_posture_state()
-        fast_downward_state = fe.get_fast_downward_state()
+
+        # extract frame information
+        fe.compute_feature_from_frame(img_rgb)
+
+        # Process Frame
+        fall_state, height_drop, significant_drop_state, angles, horizontal_posture_state, fast_downward_state = fe.frame_to_state()
+
         # Draw the pose landmarks if detected
         if results.pose_landmarks:
             h, w, _ = frame.shape
@@ -131,12 +127,12 @@ def ui_features_from_webcam():
                 cv2.circle(frame, (x, y), 4, (0, 0, 255), -1)  # Red circles
             #Draw Features
             for features_idx in [1,2]:            
-                x,y = frame_feature[features_idx,0:2]
+                x,y = fe.get_position()[features_idx,0:2]
                 x, y = int(x*w), int(y * h)
                 #postion
                 cv2.circle(frame, (x, y), 4, (0, 255, 0), -1)  # green circle
                 #speed vector 
-                vy = int(frame_feature[features_idx,4]*h/10)
+                vy = int(fe.get_velocity()[features_idx,1]*h/10)
                 cv2.arrowedLine(frame, (x, y), (x, y+vy), (255, 0, 0), 3, tipLength=0.2)
 
         cv2.putText(frame, f"Fall : {fall_state}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX,
@@ -162,6 +158,7 @@ def ui_features_from_webcam():
     cap.release()
     cv2.destroyAllWindows()
 
+
 # {    # features indices
 #     nez = 0
 #     centre_epaules = 1
@@ -184,15 +181,7 @@ def ui_features_from_webcam():
 #     }
 
 if __name__ == "__main__":
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_banana-peel.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_walking-trip.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_ouvrier.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_marathoner.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_surfing.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_bed-of-money.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_surfing.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_leg-drop.mp4"
-    # video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_electric-shock.mp4"
+
     video_path = "/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/data/chute_faint.mp4"
     ui_features_from_path(video_path)
     ui_features_from_webcam()

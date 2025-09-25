@@ -1,4 +1,5 @@
 import numpy as np
+from src.extract_landmark import video_to_array, frame_to_row
 
 class FeaturesExtraction():
     def __init__(self,size=50):
@@ -55,10 +56,18 @@ class FeaturesExtraction():
         #class atribute
         self.frame_number += 1
 
-        
+    def compute_feature_from_frame(self, img_rgb):
+        """ Extract frame information
+        Store in the storage class the information of the new frame
+        Input:
+        * imf_rgb an rgb frame
+        """
+        self.compute_feature_row(frame_to_row(img_rgb))
 
     def get_previous_feature_row(self, index=0):
-        """index = 0, for the last frame"""
+        """ return internal format of storage 
+        use get position, velocity or acceleration
+        index = 0, for the last frame"""
         if index >= self.size:
             return Exception("Cannot access rows with index greater that init size of instance")
         return self.features[(self.last_id - index)]
@@ -140,3 +149,38 @@ class FeaturesExtraction():
             self.last_FALL_condition = self.frame_number
             return True
         return False
+    
+    def frame_to_state(self):
+        """ process frame to extract fall status
+        return:
+        * fall_state : Main fall detection (True if the 3 falls states are True), False
+
+        * height_drop : float, how much the torso dropped
+        * significant_drop_state : True if the dorso drop is considered significant
+        * angles : float, angle of the body to horizontal
+        * horizontal_posture_state : True if the body is horizontal, False
+        * fast_downward_state : True if torso dropped fast enough to be considered a fall
+        """
+        fall_state = self.get_fall_state()
+        height_drop = self.get_height_drop()
+        if self.frame_number >= 20:
+            significant_drop_state = self.get_significant_drop_state()
+        else:
+            significant_drop_state = False
+        angles = self.get_angles()
+        horizontal_posture_state = self.get_horizontal_posture_state()
+        fast_downward_state = self.get_fast_downward_state()
+        return fall_state, height_drop, significant_drop_state, angles, horizontal_posture_state, fast_downward_state
+    
+    def get_position(self,index):
+        frame=self.get_previous_feature_row(index=0)
+        return frame[:,0:3]
+    
+    def get_velocity(self,index):
+        frame=self.get_previous_feature_row(index=0)
+        return frame[:,3:6]
+    
+    def get_acceletation(self,index):
+        frame=self.get_previous_feature_row(index=0)
+        return frame[:,7:10]
+    

@@ -23,7 +23,7 @@ def compute_torso_angle(shoulders, hips):
 
 def detect_fall_improved(features, vertical_axis=1,
                 velocity_threshold=2.0, acceleration_threshold=10.0,
-                angle_threshold=100.0, height_drop_threshold=0.2): #angle_threshold=100.0, height_drop_threshold=80):
+                angle_threshold=100.0, height_drop_threshold=0.2): 
     """
     Improved fall detection based on multiple criteria.
     """
