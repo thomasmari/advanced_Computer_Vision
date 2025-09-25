@@ -24,15 +24,16 @@ mp_drawing = mp.solutions.drawing_utils
 
 
 def run_webcam_stream():
-    
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns([0.2,0.6,0.2])
 
     with col2:
-        st.image("/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/part2_projet/FallIsComing.webp", width=200)
+        st.image("/home/marie.edet@Digital-Grenoble.local/Documents/mod18_acv/part2_projet/FallIsComing.webp", width=400)
+        # st.caption("By Jérôme, Marie, Mohamad and Thomas")
+        st.markdown("<p style='text-align: center; color: grey;'>By Jérôme, Marie, Mohamad and Thomas </p>", unsafe_allow_html=True)
         st.session_state.run_webcam = False
 
-        if st.button("Start Webcam", width=200):
+        if st.button("📹 Start Webcam 📹", width=400):
             st.session_state.run_webcam = True
     
     FRAME_WINDOW = st.image([])
