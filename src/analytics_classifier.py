@@ -1,5 +1,5 @@
-from extract_landmark import video_to_array
-from fall_features_extraction import cha_table_features
+from src.extract_landmark import video_to_array
+from src.fall_features_extraction import cha_table_features
 import cv2
 import numpy as np
 

@@ -46,6 +46,8 @@ def frame_to_row(img):
     frame_landmark_values = np.empty((nb_landmark,3)) # 3 for x,y,z
     # Iterate over the detected landmarks.
     i=0
+    if results.pose_landmarks is None:
+        return np.zeros((nb_landmark, 3))  # or handle as you need
     for landmark in results.pose_landmarks.landmark:
         # frame_landmark_values[i] = ((int(landmark.x * width), int(landmark.y * height),
                             # (landmark.z * width))) ##version calibree

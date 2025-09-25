@@ -1,5 +1,5 @@
 # Feature Extraction for Falls
-from extract_landmark import video_to_array
+from src.extract_landmark import video_to_array
 import numpy as np
 
 
@@ -41,7 +41,6 @@ import numpy as np
 #         features[2:, idx_landmarks, 10] = np.linalg.norm(acceleration, axis=1)
 
 #     return features
-
 
 def cha_table_features(landmarks):
     nb_frames, nb_landmarks, nb_coord = landmarks.shape
