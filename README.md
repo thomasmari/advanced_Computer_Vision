@@ -14,6 +14,10 @@ Can be integrated in other ACV app such as fitness and yoga trainer, just dance.
 
 ## Running Guide
 
+```bash
+uv sync
+uv run streamlit run app.py```
+
 From a webcam live video, detect if someone is falling down.
 
 Conditions to a fall :
